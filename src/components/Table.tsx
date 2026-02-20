@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import PropTypes from "prop-types";
 import api from "../api/api";
 
-export default function Table({
-  title,
-  place_of_origin,
-  artist_display,
-  inscriptions,
-  date_start,
-  date_end,
-}) {
-  const [arts, setArts] = useState([]);
+type Arts = {
+  title: string;
+  place_of_origin: string;
+  artist_display: string;
+  inscriptions: string;
+  date_start: string;
+  date_end: string;
+};
+export default function Table() {
+  const [arts, setArts] = useState<Arts[]>([]);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    api().then((data: Arts[]) => setArts(data));
+  }, []);
   return (
     <div className="card">
       <DataTable value={arts} tableStyle={{ minWidth: "50rem" }}>
@@ -28,11 +30,3 @@ export default function Table({
     </div>
   );
 }
-Table.propTypes = {
-  title: PropTypes.string.isRequired,
-  place_of_origin: PropTypes.string,
-  artist_display: PropTypes.string,
-  inscriptions: PropTypes.string,
-  date_start: PropTypes.string,
-  date_end: PropTypes.string,
-};

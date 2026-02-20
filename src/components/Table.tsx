@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { DataTable } from "primereact/datatable";
+import {
+  DataTable,
+  type DataTableSelectionMultipleChangeEvent,
+} from "primereact/datatable";
 import { Column } from "primereact/column";
 import api from "../api/api";
 import { Paginator, type PaginatorPageChangeEvent } from "primereact/paginator";
-// import { Checkbox } from "primereact/checkbox";
+
 export type Arts = {
   title: string;
   place_of_origin: string;
@@ -17,14 +20,15 @@ export default function Table() {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
   const [totalRecords, setTotalRecords] = useState(0);
-
+  const [selectedArts, setSelectedArts] = useState<Arts[]>([]);
   const onPageChange = (event: PaginatorPageChangeEvent) => {
     setFirst(event.first);
     setRows(event.rows);
   };
 
   useEffect(() => {
-    const page = first / rows + 1; // first is the
+    const page = first / rows + 1; // first tells how many I skipped,
+    // rows will tell how many rows are there in a page.
     api(page).then((result) => {
       setArts(result.data);
       setTotalRecords(result.total);
@@ -41,7 +45,16 @@ export default function Table() {
         tableStyle={{ minWidth: "50rem" }}
         showGridlines
         dataKey="id"
+        selectionMode="multiple"
+        selection={selectedArts}
+        onSelectionChange={(e: DataTableSelectionMultipleChangeEvent<Arts[]>) =>
+          setSelectedArts(e.value)
+        }
       >
+        <Column
+          selectionMode="multiple"
+          headerStyle={{ width: "5rem" }}
+        ></Column>
         <Column field="title" header="title"></Column>
         <Column field="place_of_origin" header="Place Of Origin"></Column>
         <Column field="artist_display" header="Artist Display"></Column>
